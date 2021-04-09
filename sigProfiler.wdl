@@ -1,10 +1,11 @@
-Version 1.0
+version 1.0
 
 workflow sigProfiler {
 
   input {
     File vcfFile
     File vcfIndex
+    String outputFileNamePrefix
   }
 
   parameter_meta {
@@ -12,13 +13,13 @@ workflow sigProfiler {
     vcfIndex: "Prefix for filename"
   }
 
-  call generateMatrix {
+  call extractSignature {
     input:
      vcfFile = vcfFile,
      outputFileNamePrefix = outputFileNamePrefix }
 
   output {
-    File result     = sigProfiler.result
+    File result     = extractSignature.result
   }
 
   meta {
@@ -38,16 +39,16 @@ workflow sigProfiler {
   }
 }
 
-task generateMatrix {
+task extractSignature {
 
   input {
   	File vcfFile
   	String outputFileNamePrefix
-    String reference_genome = "GRCh38"
-    String opportunity_genome = "GRCh38"
-    String input_type = "vcf"
-    String out_put
-    String input_data
+        String reference_genome = "GRCh38"
+        String opportunity_genome = "GRCh38"
+        String input_type = "vcf"
+        String out_put
+        String input_data
   	String modules = "sigprofilerextractor/1.1"
 	Int jobMemory = 8
 	Int threads = 4
@@ -112,16 +113,16 @@ task generateMatrix {
         )
       CODE
 
-       tar cf - "~{outputFileNamePrefix}"/output | gzip --no-name > "~{outputFileNamePrefix}".tar.gz
+       tar cf - ~{outputFileNamePrefix}/output | gzip --no-name > ~{outputFileNamePrefix}.tar.gz
   >>>
 
   output {
-  	 File result = "~{outputFileNamePrefix}".tar.gz
+  	 File result = "~{outputFileNamePrefix}.tar.gz"
   }
 
   meta {
 	  output_meta: {
-        output1: "JSON file of collated results"
+        result: "JSON file of collated results"
 	  }
   }
 }
