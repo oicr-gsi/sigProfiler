@@ -86,20 +86,19 @@ task sigproSS {
       #create output directory
       os.mkdir("~{outputFileNamePrefix}")
       #copy vcf file into directory
-      with gzip.open(vcfFile, 'rt') as old_file, open(outputFileNamePrefix + "/" + basename(vcfFile[:-3]), 'w') as new_file:
+      with gzip.open("~{vcfFile}", 'rt') as old_file, open("~{outputFileNamePrefix}" + "/" + basename("~{vcfFile}"[:-3]), 'w') as new_file:
           new_file.write(old_file.read())
       # run signature extractor
-      spss.single_sample("~{outputFileNamePrefix}", "~{outputFileNamePrefix}/results", ref="~{reference_genome}", exome=False)
-      shutil.move("results", "~{outputFileNamePrefix}" + "/" + "results")
-      shutil.move("~{outputFileNamePrefix}" + "/" + "results" + "/" + "decomposition profile.csv", "~{outputFileNamePrefix}" + "/" + "results" + "/" + "decompositionprofile.csv")
+      spss.single_sample("~{outputFileNamePrefix}", "results", ref="~{reference_genome}", exome=False)
+      shutil.move("results" + "/" + "decomposition profile.csv", "results" + "/" + "decompositionprofile.csv")
       CODE
   >>>
 
   output {
-      File decompositionprofile = "~{outputFileNamePrefix}/decomposition_profile.csv"
-      File mutationprobabilities = "~{outputFileNamePrefix}/Mutation_Probabilities.txt"
-      File sigactivities = "~{outputFileNamePrefix}/Sig_activities.txt"
-      File signatures = "~{outputFileNamePrefix}/Signatures.txt"
+      File decompositionprofile = "results/decomposition_profile.csv"
+      File mutationprobabilities = "results/Mutation_Probabilities.txt"
+      File sigactivities = "results/Sig_activities.txt"
+      File signatures = "results/Signatures.txt"
   }
 
   meta {
