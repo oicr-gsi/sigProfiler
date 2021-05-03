@@ -1,4 +1,4 @@
-Version 1.0
+version 1.0
 
 workflow sigprofiler {
 
@@ -10,6 +10,7 @@ workflow sigprofiler {
   parameter_meta {
     vcfFile: "file to extract signatures from"
     vcfIndex: "Prefix for filename"
+    outputFileNamePrefix: "the file name prefix you wish to use"
   }
 
   call sigproSS {
@@ -20,7 +21,7 @@ workflow sigprofiler {
   output {
     File decompositionprofile = sigproSS.decompositionprofile
     File mutationprobabilities = sigproSS.mutationprobabilities
-    File sigactivities = sigproSS.igactivities
+    File sigactivities = sigproSS.sigactivities
     File signatures = sigproSS.signatures
   }
 
@@ -50,27 +51,27 @@ task sigproSS {
   input {
   	File vcfFile
   	String outputFileNamePrefix
-    String reference_genome = "GRCh38"
-    String opportunity_genome = "GRCh38"
+        String reference_genome = "GRCh38"
   	String modules = "sigpross/0.0.0.27 sigprofilerextractor/1.1 sigprofilematrixgenerator/1.1"
-	  Int jobMemory = 8
-	  Int threads = 4
+	Int jobMemory = 8
+	Int threads = 4
   	Int timeout = 1
   }
 
   parameter_meta {
   	vcfFile: "JSON result file from bamQCMetrics"
   	outputFileNamePrefix: "Prefix for output file"
-  	modules: "required environment modules"
-    memory: "Memory allocated for this job"
+  	reference_genome: "the genome version used for variant calling"        
+        modules: "required environment modules"
+        jobMemory: "Memory allocated for this job"
   	threads: "Requested CPU threads"
   	timeout: "hours before task timeout"
   }
 
   runtime {
   	modules: "~{modules}"
-    memory:  "~{jobMemory} GB"
-	  cpu:     "~{threads}"
+        memory:  "~{jobMemory} GB"
+	cpu:     "~{threads}"
   	timeout: "~{timeout}"
   }
 
@@ -95,18 +96,18 @@ task sigproSS {
   >>>
 
   output {
-  	  File decompositionprofile = "~{outputFileNamePrefix}"/decomposition_profile.csv
-      File mutationprobabilities = "~{outputFileNamePrefix}"/Mutation_Probabilities.txt
-      File sigactivities = "~{outputFileNamePrefix}"/Sig_activities.txt
-      File signatures = "~{outputFileNamePrefix}"/Signatures.txt
+      File decompositionprofile = "~{outputFileNamePrefix}/decomposition_profile.csv"
+      File mutationprobabilities = "~{outputFileNamePrefix}/Mutation_Probabilities.txt"
+      File sigactivities = "~{outputFileNamePrefix}/Sig_activities.txt"
+      File signatures = "~{outputFileNamePrefix}/Signatures.txt"
   }
 
   meta {
-	    output_meta: {
-        decompositionprofile: "summary of global nmf sigatures"
-        mutationprobabilities: "table summarizing probability of each mutation by signature"
-        sigactivities: "number of mutations attributed to each signature"
+    output_meta: {
+        decompositionprofile: "summary of global nmf sigatures",
+        mutationprobabilities: "table summarizing probability of each mutation by signature",
+        sigactivities: "number of mutations attributed to each signature",
         signatures: "attribution of each mutation to each signature"
-	  }
+      }
   }
 }

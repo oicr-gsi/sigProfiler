@@ -1,4 +1,4 @@
-# sigProfiler
+# sigprofiler
 
 Workflow to detect signatures from snvs and indels
 
@@ -8,13 +8,14 @@ Workflow to detect signatures from snvs and indels
 
 * [sigprofilematrixgenerator 1.1](https://github.com/AlexandrovLab/SigProfilerMatrixGenerator)
 * [sigprofilerextractor 1.1](https://github.com/AlexandrovLab/SigProfilerExtractor)
+* [sigpross 0.0.0.27](https://github.com/AlexandrovLab/SigProfilerSingleSample)
 
 
 ## Usage
 
 ### Cromwell
 ```
-java -jar cromwell.jar run sigProfiler.wdl --inputs inputs.json
+java -jar cromwell.jar run sigprofiler.wdl --inputs inputs.json
 ```
 
 ### Inputs
@@ -23,8 +24,7 @@ java -jar cromwell.jar run sigProfiler.wdl --inputs inputs.json
 Parameter|Value|Description
 ---|---|---
 `vcfFile`|File|file to extract signatures from
-`vcfIndex`|File|Prefix for filename
-`outputFileNamePrefix`|String|Output filename for signatuer folder
+`outputFileNamePrefix`|String|the file name prefix you wish to use
 
 
 #### Optional workflow parameters:
@@ -35,20 +35,21 @@ Parameter|Value|Default|Description
 #### Optional task parameters:
 Parameter|Value|Default|Description
 ---|---|---|---
-`extractSignature.reference_genome`|String|"GRCh38"|The name of the reference genome
-`extractSignature.opportunity_genome`|String|"GRCh38"|The build or version of the reference signatures for the reference genome
-`extractSignature.input_type`|String|"vcf"|the type of input, vcf or matrix
-`extractSignature.modules`|String|"sigprofilerextractor/1.1"|required environment modules
-`extractSignature.jobMemory`|Int|8|Memory allocated for this job
-`extractSignature.threads`|Int|4|Requested CPU threads
-`extractSignature.timeout`|Int|1|hours before task timeout
+`sigproSS.reference_genome`|String|"GRCh38"|the genome version used for variant calling
+`sigproSS.modules`|String|"sigpross/0.0.0.27 sigprofilerextractor/1.1 sigprofilematrixgenerator/1.1"|required environment modules
+`sigproSS.jobMemory`|Int|8|Memory allocated for this job
+`sigproSS.threads`|Int|4|Requested CPU threads
+`sigproSS.timeout`|Int|1|hours before task timeout
 
 
 ### Outputs
 
 Output | Type | Description
 ---|---|---
-`result`|File|JSON file of collated results
+`decompositionprofile`|File|summary of global nmf sigatures
+`mutationprobabilities`|File|table summarizing probability of each mutation by signature
+`sigactivities`|File|number of mutations attributed to each signature
+`signatures`|File|attribution of each mutation to each signature
 
 
 ## Niassa + Cromwell
